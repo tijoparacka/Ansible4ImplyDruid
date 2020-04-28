@@ -12,4 +12,5 @@ druid_conf_dir: /opt/druid/conf
 druid_base_dir: /opt/imply/
 druid_tmpdir: /tmp
 segment_cache_location: "{{ druid_base_dir }}/druid-data"
-druid_extensions_dir: "{{ druid_base_dir}}/druid/extensions"
+druid_extensions_dir: "{{ druid_base_dir}}/druid/extensions
+druid_indexer_task_baseDir: "{{ druid_tmpdir }}/druid/task"

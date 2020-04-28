@@ -1,97 +1,45 @@
 Druid Ansible
 ===============
 
-This project can setup a druid cluster on AWS
+This project can setup a  imply  cluster
 
-AWS preparations
+Preparations
 ----------------
 
 Instances:
-
-Instances are automatically created
+Create the instances where you would like to install druid. Installing zookeeper is not part of this scripts
 
 Storage:
 
-Create a bucket (druidbucket) with the following 3 folders in it:
+This script will create folder for the following . Currently deepstorage with local disk is supported.
 - logs
 - data
 - deepstorage
 
 User:
 
-Create a IAM user (druiduser) for accessing the data in S3. Be sure to capture the credentials
 
-Add the following policy to the user
+#ansible playbook variable configuration
 
-```
-{
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "s3:ListAllMyBuckets",
-            "Resource": "arn:aws:s3:::*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "s3:*",
-            "Resource": [
-                "arn:aws:s3:::druidbucket",
-                "arn:aws:s3:::druidbucket/*"
-            ]
-        }
-    ]
-}
-```
-
-
-AWS ansible playbook variable configuration
-in vars/cluster.yml supply the needed ami, vpc, subnet and key filename variables:
-```
-ami: <ami-id>
-main_vpc_id: <vpc-id>
-subnet_id_a: <subnet-id-region-a>
-subnet_id_b: <subnet-id-region-b>
-subnet_id_c: <subnet-id-region-c>
-key_name: <druid-key-pem-file>
-```
-
-in roles/security-groups/default/main.yml change the external ip range to which the security group will be opened up:
-```
-ip_range: "192.168.1.0/32"
-```
-
-in vars/druid.yml supply the needed s3 variables:
+in vars/druid.yml supply the needed  variables:
 
 ```
-deep_storage_type: s3
-druid_s3_accessKey: ACCESS_KEY_ID
-druid_s3_secretKey: SECRET_KEY
-druid_s3_baseKey: deepstorage
-druid_s3_bucketname: druidbucket
-deep_storage_location: {{ druid_s3_bucketname }}/data
-deep_storage_log_location: {{ druid_s3_bucketname }}/logs
-``` 
+imply_version: 3.2.0
+imply_download_url: https://static.imply.io/release/imply-{{ imply_version }}.tar.gz
+druid_run_user: druid
+zookeeper_url: localhost:2181
 
-AWS deployment
---------------
-ansible-playbook create-druid-cluster.yml
-ansible-playbook --user centos --private-key ./druid.pem ping.yml
-ansible-playbook --user centos --private-key ./druid.pem playbook.yml
+druid_environment: dev
+druid_root_logger_level: info
 
-`./data/index-data.sh` to populate druid with the wikiticker data.
+druid_conf_dir: /opt/druid/conf
+druid_base_dir: /opt/imply/
+druid_tmpdir: /tmp
+segment_cache_location: "{{ druid_base_dir }}/druid-data"
+druid_extensions_dir: "{{ druid_base_dir}}/druid/extensions
+druid_indexer_task_baseDir: "{{ druid_tmpdir }}/druid/task"
+```
 
-For upgrading druid to version 0.xx.x one can use the following scripts.
+To execute the playbook,  execute the below command.
 
-To see if druid still works during the rolling upgrade you can use the `./data/query-druid.sh` script. This reports an error if the HTTP status is not 200 or if the response is empty. In the non-HA setup of druid this will only be the case for a short period when te broker is being restarted.
-
-ansible-playbook --user centos --private-key ./druid.pem upgrade.yml
-
-
-Testing
--------
-To insert data into druid one can use the scripts in the `data` directory.
-- First step is to create the `./data/index-data.json` file based on the `./data/index-data.json.tmpl` file.
-- Second step is to run the `./data/index-data.sh` script.
-
-The `./data/query-druid.sh` script will fire queries to druid and can be used for testing the connection.
-
+```ansible-playbook  -i inventories/development/cluster.ini  -u <user eg: centos> --private-key  <key file > cluster_setup.yml ```

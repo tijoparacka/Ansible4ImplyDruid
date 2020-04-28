@@ -19,11 +19,10 @@
     - "{{ druid_base_dir }}"
     - "{{ druid_base_dir }}/var/log/druid"
     - "{{ segment_cache_location }}"
-    - "{{ druid_indexer_task_baseDir }}"
-    - "{{ druid_indexer_task_hadoopWorkingPath }}"
+
 
 - name: unarchive druid
-  unarchive: src="/tmp/druid-{{ imply_version }}.tar.gz" dest={{ druid_base_dir }} copy=no owner=druid group=druid
+  unarchive: src="/tmp/imply-{{ imply_version }}.tar.gz" dest={{ druid_base_dir }} copy=no owner=druid group=druid
 
 - name: ensure druid config directories exists
   file: path={{ druid_conf_dir }}/{{ item }} state=directory owner=druid group=druid mode=0775

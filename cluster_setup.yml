@@ -1,8 +1,6 @@
 ---
--
 
-- hosts: all
-  become: yes
+- hosts: masterNodes,dataNodes,queryNode
   gather_facts: yes
   vars_files:
     - vars/druid.yml
@@ -15,19 +13,19 @@
 #  roles:
 #    - zookeeper
 
-- hosts: masters
+- hosts: masterNodes
   vars_files:
     - vars/druid.yml
   roles:
     - setup
 
-- hosts: historicals
+- hosts: dataNodes
   vars_files:
     - vars/druid.yml
   roles:
     - setup
 
-- hosts: brokers
+- hosts: queryNode
   vars_files:
     - vars/druid.yml
   roles:
