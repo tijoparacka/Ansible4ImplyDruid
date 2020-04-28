@@ -1,0 +1,15 @@
+imply_version: 3.2.0
+imply_download_url: https://static.imply.io/release/imply-{{ imply_version }}.tar.gz
+
+druid_run_user: druid
+
+zookeeper_url: localhost:2181
+
+druid_environment: dev
+druid_root_logger_level: info
+
+druid_conf_dir: /opt/druid/conf
+druid_base_dir: /opt/imply/
+druid_tmpdir: /tmp
+segment_cache_location: "{{ druid_base_dir }}/druid-data"
+druid_extensions_dir: "{{ druid_base_dir}}/druid/extensions"

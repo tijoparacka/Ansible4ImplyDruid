@@ -1,0 +1,34 @@
+---
+-
+
+- hosts: all
+  become: yes
+  gather_facts: yes
+  vars_files:
+    - vars/druid.yml
+  roles:
+    - java
+
+#- hosts: zookeepers
+#  vars_files:
+#    - vars/druid.yml
+#  roles:
+#    - zookeeper
+
+- hosts: masters
+  vars_files:
+    - vars/druid.yml
+  roles:
+    - setup
+
+- hosts: historicals
+  vars_files:
+    - vars/druid.yml
+  roles:
+    - setup
+
+- hosts: brokers
+  vars_files:
+    - vars/druid.yml
+  roles:
+    - setup

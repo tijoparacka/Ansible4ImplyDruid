@@ -1,0 +1,42 @@
+---
+
+- hosts: masterNodes
+  vars_files:
+    - vars/druid.yml
+
+  tasks:
+
+    - import_tasks: cluster_ops/tasks/restart-coordinator.yml
+
+# TODO implement for zookeeper and overload start status
+#    - import_tasks: cluster_ops/tasks/restart-overload.yml
+
+    - name: Debug node readiness right after restart
+      debug: var=node_readiness
+
+- hosts: dataNodes
+  vars_files:
+    - vars/druid.yml
+
+  tasks:
+
+    - import_tasks: cluster_ops/tasks/restart-historical.yml
+
+    - name: Debug node readiness right after restart
+      debug: var=node_readiness
+
+    - import_tasks: cluster_ops/tasks/restart-middlemanager.yml
+
+    - name: Debug node readiness right after restart
+      debug: var=node_readiness
+
+- hosts: brokerNodes
+  vars_files:
+    - vars/druid.yml
+
+  tasks:
+
+    - import_tasks: cluster_ops/tasks/restart-broker.yml
+
+    - name: Debug node readiness right after restart
+      debug: var=node_readiness

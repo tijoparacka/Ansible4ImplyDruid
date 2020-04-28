@@ -1,0 +1,63 @@
+- name: Download imply Distribution
+
+  get_url: url={{ imply_download_url }}  dest=/tmp/imply-{{ imply_version }}.tar.gz force=no
+
+- name: Create druid group
+  group:
+    name: "{{ druid_run_user }}"
+    state: present
+
+- name: Create druid user with group
+  user:
+    name: "{{ druid_run_user }}"
+    comment: "Druid run user"
+    group: "{{ druid_run_user }}"
+
+- name: ensure druid used directories exists
+  file: path={{ item }} state=directory owner=druid group=druid mode=0775
+  with_items:
+    - "{{ druid_base_dir }}"
+    - "{{ druid_base_dir }}/var/log/druid"
+    - "{{ segment_cache_location }}"
+    - "{{ druid_indexer_task_baseDir }}"
+    - "{{ druid_indexer_task_hadoopWorkingPath }}"
+
+- name: unarchive druid
+  unarchive: src="/tmp/druid-{{ imply_version }}.tar.gz" dest={{ druid_base_dir }} copy=no owner=druid group=druid
+
+- name: ensure druid config directories exists
+  file: path={{ druid_conf_dir }}/{{ item }} state=directory owner=druid group=druid mode=0775
+  with_items:
+    - _common
+    - broker
+    - coordinator
+    - overlord
+    - historical
+    - router
+    - middleManager
+
+- name: copy over common runtime.properties
+  template: src=_common/common.runtime.properties dest={{ druid_conf_dir }}/_common/common.runtime.properties owner=druid group=druid mode=0664
+
+- name: copy over common logging config
+  template: src=_common/log4j2.xml dest={{ druid_conf_dir }}/_common/log4j2.xml owner=druid group=druid mode=0664
+
+- name: copy over other runtime.properties
+  template: src={{ item }}/runtime.properties dest={{ druid_conf_dir }}/{{ item }}/runtime.properties owner=druid group=druid mode=0664
+  with_items:
+    - broker
+    - coordinator
+    - overlord
+    - historical
+    - router
+    - middleManager
+
+- name: copy over other runtime.properties
+  template: src={{ item }}/jvm.config dest={{ druid_conf_dir }}/{{ item }}/jvm.config owner=druid group=druid mode=0664
+  with_items:
+    - broker
+    - coordinator
+    - overlord
+    - historical
+    - router
+    - middleManager
