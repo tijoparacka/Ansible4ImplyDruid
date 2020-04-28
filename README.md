@@ -43,3 +43,15 @@ druid_indexer_task_baseDir: "{{ druid_tmpdir }}/druid/task"
 To execute the playbook,  execute the below command.
 
 ```ansible-playbook  -i inventories/development/cluster.ini  -u <user eg: centos> --private-key  <key file > cluster_setup.yml ```
+
+Limitations:
+
+We are in the process of improving the playbook . As of now following limitations applied.
+
+1. Only one master is allowed to create
+2. Supported only derby db in embedded mode
+3. Zookeeper need to be installed separately; use the link to install zookeeper https://github.com/tijoparacka/zookeeper-cluster-ansible
+4. Secure installation not done
+5. S3 or any other cloud deep storage is  not done
+6. Recommended configs based on the hardware is not done.
+7. All the cluster restart scenarios are not tested
